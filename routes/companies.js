@@ -7,7 +7,7 @@ const ExpressError = require('../expressError')
 router.get('/', async (req, res, next) => {
 	try {
 		const results = await db.query(`SELECT code, name FROM companies`)
-		return res.json({ companies: results.row })
+		return res.json({ companies: results.rows })
 	} catch (err) {
 		return next(err)
 	}
@@ -17,12 +17,11 @@ router.get('/', async (req, res, next) => {
 router.get('/:code', async (req, res, next) => {
 	try {
 		const { code } = req.params
-		const { name } = req.body
-		const results = await db.query(`SELECT * FROM companies WHERE code=$1, name=$2`, [code, name])
+		const results = await db.query(`SELECT * FROM companies WHERE code=$1`, [code])
 		if (results.rows.length === 0) {
 			throw new ExpressError(`Can't find company with code of ${code}`, 404)
 		}
-		return res.send({ company: results.row[0] })
+		return res.send({ company: results.rows[0] })
 	} catch (err) {
 		return next(err)
 	}
@@ -36,7 +35,7 @@ router.post('/', async (req, res, next) => {
 			`INSERT INTO companies (code, name, description) VALUES ($1, $2, $3) RETURNING *`,
 			[code, name, description]
 		)
-		return res.status(201).json({ company: results.row[0] })
+		return res.status(201).json({ company: results.rows[0] })
 	} catch (err) {
 		return next(err)
 	}
@@ -54,7 +53,7 @@ router.put('/:code', async (req, res, next) => {
 		if (results.rows.length === 0) {
 			throw new ExpressError(`Can't find company with code of ${code}`, 404)
 		}
-		return res.send({ company: results.row[0] })
+		return res.send({ company: results.rows[0] })
 	} catch (err) {
 		return next(err)
 	}

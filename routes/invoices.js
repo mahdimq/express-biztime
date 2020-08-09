@@ -7,7 +7,7 @@ const ExpressError = require('../expressError')
 router.get('/', async (req, res, next) => {
 	try {
 		const results = await db.query(`SELECT id, comp_code FROM invoices`)
-		return res.json({ invoices: results.row })
+		return res.json({ invoices: results.rows })
 	} catch (err) {
 		return next(err)
 	}
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res, next) => {
 		if (results.rows.length === 0) {
 			throw new ExpressError(`Can't find invoice with id of ${id}`, 404)
 		}
-		return res.send({ invoice: results.row[0] })
+		return res.send({ invoice: results.rows[0] })
 	} catch (err) {
 		return next(err)
 	}
@@ -35,7 +35,7 @@ router.post('/', async (req, res, next) => {
 			`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2) RETURNING *`,
 			[comp_code, amt]
 		)
-		return res.status(201).json({ invoice: results.row[0] })
+		return res.status(201).json({ invoice: results.rows[0] })
 	} catch (err) {
 		return next(err)
 	}
@@ -52,7 +52,7 @@ router.put('/:id', async (req, res, next) => {
 		if (results.rows.length === 0) {
 			throw new ExpressError(`Can't find invoice with id of ${id}`, 404)
 		}
-		return res.send({ invoice: results.row[0] })
+		return res.send({ invoice: results.rows[0] })
 	} catch (err) {
 		return next(err)
 	}
