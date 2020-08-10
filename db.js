@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'test') {
 	DB_URI = 'postgresql:///biztime'
 }
 
-let db = new Client({ connectionsString: DB_URI })
+let db = new Client({ connectionString: DB_URI })
 
 db.connect()
 

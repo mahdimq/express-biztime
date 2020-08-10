@@ -2,6 +2,8 @@
 
 DROP TABLE IF EXISTS invoices;
 DROP TABLE IF EXISTS companies;
+DROP TABLE IF EXISTS industries;
+DROP TABLE IF EXISTS companies_industries;
 
 CREATE TABLE companies (
   code text PRIMARY KEY,
@@ -19,10 +21,26 @@ CREATE TABLE invoices (
   CONSTRAINT invoices_amt_check CHECK ((amt > (0)::double precision))
 );
 
-INSERT INTO companies
+-- MANY TO MANY ASSIGNMENT
+CREATE TABLE industries (
+  code text NOT NULL PRIMARY KEY,
+  industry text NOT NULL
+);
+
+CREATE TABLE companies_industries(
+  company_code text NOT NULL REFERENCES companies,
+  industry_code text NOT NULL REFERENCES industries
+);
+--
+
+INSERT INTO companies (code, name, description)
 VALUES ('apple', 'Apple Computer', 'Maker of OSX.'),
        ('ibm', 'IBM', 'Big blue.'),
-       ('dis', 'Disney', 'Home of Mickey Mouse');
+       ('dis', 'Disney', 'Home of Mickey Mouse'),
+       ('jpm', 'JPMorgan', 'Big time Financial Company'),
+       ('inva', 'Inova', 'Inova Group of Hospitals'),
+       ('xyz', 'XYZ Marketing', 'Fake Marketing Company'),
+       ('abc', 'ABC Advertising', 'Fake Advertising Company');
 
 INSERT INTO invoices (comp_Code, amt, paid, paid_date)
 VALUES ('apple', 100, false, null),
@@ -30,3 +48,19 @@ VALUES ('apple', 100, false, null),
        ('apple', 300, true, '2018-01-01'),
        ('ibm', 400, false, null),
        ('dis', 200, true, '2020-03-15');
+
+INSERT INTO industries (code, industry)
+VALUES ('ent', 'Entertainment'),
+       ('mktg', 'Marketing'),
+       ('fin', 'Finance'),
+       ('adv', 'Advertising'),
+       ('hlth', 'Healthcare'),
+       ('it', 'Information Technology');
+
+INSERT INTO companies_industries (company_code, industry_code)
+VALUES ('apple', 'it'),
+       ('dis', 'ent'),
+       ('ibm', 'it'),
+       ('jpm', 'fin'),
+       ('abc', 'adv'),
+       ('xyz', 'mktg');
